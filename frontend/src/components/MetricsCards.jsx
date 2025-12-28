@@ -1,40 +1,44 @@
 function MetricsCards({ data }) {
-  // Вычисление метрик
+  // Вычисление финансовых метрик
   const totalRecords = data.length
   
-  const averageScore = data.length > 0
-    ? (data.reduce((sum, item) => sum + (item.score || 0), 0) / data.length).toFixed(1)
+  const totalAmount = data.reduce((sum, item) => sum + (item.amount || 0), 0)
+  const averageAmount = data.length > 0
+    ? (totalAmount / data.length).toFixed(0)
     : 0
 
-  const totalTime = data.reduce((sum, item) => sum + (item.time_min || 0), 0)
-  const averageTime = data.length > 0
-    ? (totalTime / data.length).toFixed(0)
-    : 0
+  const incomeAmount = data
+    .filter(item => item.category === 'Доход' || item.category === 'Возврат' || item.category === 'Инвестиция')
+    .reduce((sum, item) => sum + (item.amount || 0), 0)
+  
+  const expenseAmount = data
+    .filter(item => item.category === 'Расход')
+    .reduce((sum, item) => sum + (item.amount || 0), 0)
 
-  const uniqueStudents = new Set(data.map(item => item.student)).size
+  const uniqueClients = new Set(data.map(item => item.client)).size
 
   const metrics = [
     {
-      title: 'Всего записей',
+      title: 'Всего транзакций',
       value: totalRecords,
       icon: '📊',
       color: 'bg-blue-500'
     },
     {
-      title: 'Средний балл',
-      value: averageScore,
-      icon: '⭐',
+      title: 'Общая сумма',
+      value: totalAmount.toLocaleString('ru-RU'),
+      icon: '💰',
       color: 'bg-green-500'
     },
     {
-      title: 'Среднее время (мин)',
-      value: averageTime,
-      icon: '⏱️',
+      title: 'Средняя сумма',
+      value: averageAmount.toLocaleString('ru-RU'),
+      icon: '💵',
       color: 'bg-purple-500'
     },
     {
-      title: 'Уникальных студентов',
-      value: uniqueStudents,
+      title: 'Уникальных клиентов',
+      value: uniqueClients,
       icon: '👥',
       color: 'bg-orange-500'
     }

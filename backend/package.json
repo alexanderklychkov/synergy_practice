@@ -1,7 +1,7 @@
 {
   "name": "fintech-dashboard-backend",
   "version": "1.0.0",
-  "description": "Backend API for educational data dashboard",
+  "description": "Backend API for financial technology dashboard",
   "main": "server.js",
   "type": "module",
   "scripts": {

@@ -13,8 +13,8 @@ function App() {
   const [data, setData] = useState([])
   const [filteredData, setFilteredData] = useState([])
   const [filters, setFilters] = useState({
-    course: '',
-    activityType: ''
+    category: '',
+    transactionType: ''
   })
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState(null)
@@ -28,12 +28,12 @@ function App() {
   useEffect(() => {
     let filtered = [...data]
     
-    if (filters.course) {
-      filtered = filtered.filter(item => item.course === filters.course)
+    if (filters.category) {
+      filtered = filtered.filter(item => item.category === filters.category)
     }
     
-    if (filters.activityType) {
-      filtered = filtered.filter(item => item.activity_type === filters.activityType)
+    if (filters.transactionType) {
+      filtered = filtered.filter(item => item.transaction_type === filters.transactionType)
     }
     
     setFilteredData(filtered)
@@ -70,15 +70,15 @@ function App() {
     setFilters(newFilters)
   }
 
-  const courses = [...new Set(data.map(item => item.course))].filter(Boolean)
-  const activityTypes = [...new Set(data.map(item => item.activity_type))].filter(Boolean)
+  const categories = [...new Set(data.map(item => item.category))].filter(Boolean)
+  const transactionTypes = [...new Set(data.map(item => item.transaction_type))].filter(Boolean)
 
   return (
     <div className="min-h-screen bg-gray-50">
       <header className="bg-white shadow-sm">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <h1 className="text-3xl font-bold text-gray-900">Educational Data Dashboard</h1>
-          <p className="mt-1 text-sm text-gray-500">Визуализация учебных данных</p>
+          <h1 className="text-3xl font-bold text-gray-900">FinTech Dashboard</h1>
+          <p className="mt-1 text-sm text-gray-500">Визуализация финансовых транзакций</p>
         </div>
       </header>
 
@@ -104,8 +104,8 @@ function App() {
             
             <div className="mt-6">
               <Filters
-                courses={courses}
-                activityTypes={activityTypes}
+                categories={categories}
+                transactionTypes={transactionTypes}
                 filters={filters}
                 onFilterChange={handleFilterChange}
               />

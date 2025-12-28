@@ -66,12 +66,12 @@ function DataTable({ data }) {
 
   const columns = [
     { key: 'id', label: 'ID' },
-    { key: 'student', label: 'Студент' },
-    { key: 'course', label: 'Курс' },
+    { key: 'client', label: 'Клиент' },
+    { key: 'category', label: 'Категория' },
+    { key: 'transaction_type', label: 'Тип транзакции' },
     { key: 'date', label: 'Дата' },
-    { key: 'activity_type', label: 'Тип активности' },
-    { key: 'score', label: 'Балл' },
-    { key: 'time_min', label: 'Время (мин)' }
+    { key: 'amount', label: 'Сумма' },
+    { key: 'currency', label: 'Валюта' }
   ]
 
   return (
@@ -111,22 +111,22 @@ function DataTable({ data }) {
                   {row.id}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {row.student || '-'}
+                  {row.client || '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {row.course || '-'}
+                  {row.category || '-'}
+                </td>
+                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
+                  {row.transaction_type || '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
                   {row.date || '-'}
                 </td>
-                <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {row.activity_type || '-'}
-                </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm font-medium text-gray-900">
-                  {row.score || '-'}
+                  {row.amount ? row.amount.toLocaleString('ru-RU') : '-'}
                 </td>
                 <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-900">
-                  {row.time_min || '-'}
+                  {row.currency || '-'}
                 </td>
               </tr>
             ))}

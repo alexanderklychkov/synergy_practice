@@ -33,31 +33,26 @@ function Dashboard({ data }) {
     )
   }
 
-  // Подготовка данных для Bar Chart: средний балл по курсам
-  const courseScores = {}
-  const courseCounts = {}
+  // Подготовка данных для Bar Chart: сумма по категориям
+  const categoryAmounts = {}
   
   data.forEach(item => {
-    const course = item.course || 'Не указано'
-    if (!courseScores[course]) {
-      courseScores[course] = 0
-      courseCounts[course] = 0
+    const category = item.category || 'Не указано'
+    if (!categoryAmounts[category]) {
+      categoryAmounts[category] = 0
     }
-    courseScores[course] += item.score || 0
-    courseCounts[course] += 1
+    categoryAmounts[category] += item.amount || 0
   })
 
-  const courses = Object.keys(courseScores)
-  const averageScores = courses.map(course => 
-    (courseScores[course] / courseCounts[course]).toFixed(1)
-  )
+  const categories = Object.keys(categoryAmounts)
+  const amounts = categories.map(category => categoryAmounts[category])
 
   const barData = {
-    labels: courses,
+    labels: categories,
     datasets: [
       {
-        label: 'Средний балл',
-        data: averageScores,
+        label: 'Сумма (руб.)',
+        data: amounts,
         backgroundColor: 'rgba(59, 130, 246, 0.5)',
         borderColor: 'rgba(59, 130, 246, 1)',
         borderWidth: 1
@@ -65,25 +60,28 @@ function Dashboard({ data }) {
     ]
   }
 
-  // Подготовка данных для Line Chart: активность по дням
-  const dateActivity = {}
+  // Подготовка данных для Line Chart: сумма транзакций по дням
+  const dateAmounts = {}
   
   data.forEach(item => {
     const date = item.date || ''
     if (date) {
-      dateActivity[date] = (dateActivity[date] || 0) + 1
+      if (!dateAmounts[date]) {
+        dateAmounts[date] = 0
+      }
+      dateAmounts[date] += item.amount || 0
     }
   })
 
-  const sortedDates = Object.keys(dateActivity).sort()
-  const activityCounts = sortedDates.map(date => dateActivity[date])
+  const sortedDates = Object.keys(dateAmounts).sort()
+  const amountsByDate = sortedDates.map(date => dateAmounts[date])
 
   const lineData = {
     labels: sortedDates.slice(-30), // Последние 30 дней
     datasets: [
       {
-        label: 'Количество активностей',
-        data: activityCounts.slice(-30),
+        label: 'Сумма транзакций (руб.)',
+        data: amountsByDate.slice(-30),
         borderColor: 'rgba(16, 185, 129, 1)',
         backgroundColor: 'rgba(16, 185, 129, 0.1)',
         tension: 0.4,
@@ -92,16 +90,16 @@ function Dashboard({ data }) {
     ]
   }
 
-  // Подготовка данных для Pie Chart: распределение по типам активностей
-  const activityTypeCounts = {}
+  // Подготовка данных для Pie Chart: распределение по типам транзакций
+  const transactionTypeCounts = {}
   
   data.forEach(item => {
-    const type = item.activity_type || 'Не указано'
-    activityTypeCounts[type] = (activityTypeCounts[type] || 0) + 1
+    const type = item.transaction_type || 'Не указано'
+    transactionTypeCounts[type] = (transactionTypeCounts[type] || 0) + 1
   })
 
-  const activityTypes = Object.keys(activityTypeCounts)
-  const typeCounts = activityTypes.map(type => activityTypeCounts[type])
+  const transactionTypes = Object.keys(transactionTypeCounts)
+  const typeCounts = transactionTypes.map(type => transactionTypeCounts[type])
 
   const colors = [
     'rgba(59, 130, 246, 0.8)',
@@ -113,12 +111,12 @@ function Dashboard({ data }) {
   ]
 
   const pieData = {
-    labels: activityTypes,
+    labels: transactionTypes,
     datasets: [
       {
         label: 'Количество',
         data: typeCounts,
-        backgroundColor: colors.slice(0, activityTypes.length),
+        backgroundColor: colors.slice(0, transactionTypes.length),
         borderColor: 'rgba(255, 255, 255, 1)',
         borderWidth: 2
       }
@@ -142,7 +140,7 @@ function Dashboard({ data }) {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Bar Chart */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold mb-4">Средний балл по курсам</h3>
+          <h3 className="text-lg font-semibold mb-4">Сумма по категориям</h3>
           <div className="h-64">
             <Bar data={barData} options={chartOptions} />
           </div>
@@ -150,7 +148,7 @@ function Dashboard({ data }) {
 
         {/* Pie Chart */}
         <div className="bg-white rounded-lg shadow p-6">
-          <h3 className="text-lg font-semibold mb-4">Распределение по типам активностей</h3>
+          <h3 className="text-lg font-semibold mb-4">Распределение по типам транзакций</h3>
           <div className="h-64">
             <Pie data={pieData} options={chartOptions} />
           </div>
@@ -159,7 +157,7 @@ function Dashboard({ data }) {
 
       {/* Line Chart */}
       <div className="bg-white rounded-lg shadow p-6">
-        <h3 className="text-lg font-semibold mb-4">Активность по дням (последние 30 дней)</h3>
+        <h3 className="text-lg font-semibold mb-4">Сумма транзакций по дням (последние 30 дней)</h3>
         <div className="h-64">
           <Line data={lineData} options={chartOptions} />
         </div>

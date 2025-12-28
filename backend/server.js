@@ -42,12 +42,13 @@ const upload = multer({
   limits: { fileSize: 10 * 1024 * 1024 } // 10MB limit
 });
 
-// Генерация тестовых данных
+// Генерация тестовых финансовых данных
 function generateSampleData(count = 100) {
-  const courses = ['Математика', 'Физика', 'Химия', 'Биология', 'История', 'Литература'];
-  const activityTypes = ['Лекция', 'Практика', 'Лабораторная', 'Экзамен', 'Домашнее задание'];
-  const students = ['Иванов Иван', 'Петров Петр', 'Сидорова Анна', 'Козлова Мария', 'Смирнов Алексей', 
-                    'Волкова Елена', 'Новиков Дмитрий', 'Морозова Ольга'];
+  const categories = ['Доход', 'Расход', 'Инвестиция', 'Перевод', 'Возврат'];
+  const transactionTypes = ['Пополнение счета', 'Платеж за услуги', 'Перевод между счетами', 'Инвестиция', 'Возврат средств', 'Зарплата', 'Покупка', 'Продажа'];
+  const clients = ['Иванов Иван', 'Петров Петр', 'Сидорова Анна', 'Козлова Мария', 'Смирнов Алексей', 
+                    'Волкова Елена', 'Новиков Дмитрий', 'Морозова Ольга', 'ООО "ТехноСервис"', 'ИП Сидоров'];
+  const currencies = ['RUB', 'USD', 'EUR'];
   
   const data = [];
   // Начальная дата - год назад от текущей (28.12.2025)
@@ -58,14 +59,21 @@ function generateSampleData(count = 100) {
     const date = new Date(startDate);
     date.setDate(date.getDate() + randomDays);
     
+    const category = categories[Math.floor(Math.random() * categories.length)];
+    const isIncome = category === 'Доход' || category === 'Возврат' || category === 'Инвестиция';
+    // Суммы: для доходов 1000-50000, для расходов 500-30000
+    const amount = isIncome 
+      ? Math.floor(Math.random() * 49000) + 1000 
+      : Math.floor(Math.random() * 29500) + 500;
+    
     data.push({
       id: i,
-      student: students[Math.floor(Math.random() * students.length)],
-      course: courses[Math.floor(Math.random() * courses.length)],
+      client: clients[Math.floor(Math.random() * clients.length)],
+      category: category,
+      transaction_type: transactionTypes[Math.floor(Math.random() * transactionTypes.length)],
       date: date.toISOString().split('T')[0],
-      activity_type: activityTypes[Math.floor(Math.random() * activityTypes.length)],
-      score: Math.floor(Math.random() * 40) + 60, // Оценка от 60 до 100
-      time_min: Math.floor(Math.random() * 120) + 30 // Время от 30 до 150 минут
+      amount: amount,
+      currency: currencies[Math.floor(Math.random() * currencies.length)]
     });
   }
   
@@ -98,12 +106,12 @@ app.post('/api/upload', upload.single('file'), (req, res) => {
       // Преобразуем данные в нужный формат
       const record = {
         id: parseInt(data.id) || results.length + 1,
-        student: data.student || data.Student || '',
-        course: data.course || data.Course || '',
+        client: data.client || data.Client || '',
+        category: data.category || data.Category || '',
+        transaction_type: data.transaction_type || data.transactionType || data['transaction_type'] || '',
         date: data.date || data.Date || '',
-        activity_type: data.activity_type || data.activityType || data['activity_type'] || '',
-        score: parseInt(data.score || data.Score || 0),
-        time_min: parseInt(data.time_min || data.timeMin || data['time_min'] || 0)
+        amount: parseFloat(data.amount || data.Amount || 0),
+        currency: data.currency || data.Currency || 'RUB'
       };
       results.push(record);
     })
